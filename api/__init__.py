@@ -4,7 +4,7 @@ from mongoengine import connect
 import settings
 from api.authentication.auth_error import AuthError
 
-connect(settings.MONGODB_URI)
+connect(host=settings.MONGODB_URI)
 app = Flask(__name__) 
 
 app.register_blueprint(animal)
