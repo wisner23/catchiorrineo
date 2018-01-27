@@ -7,7 +7,12 @@ from api.animals.endpoints import ANIMAL
 import settings
 from api.authentication.auth_error import AuthError
 
-connect(host=settings.MONGODB_URI)
-APP = Flask(__name__)
 
-APP.register_blueprint(ANIMAL)
+connect(host=settings.MONGODB_URI)
+
+
+def create_app():
+    """Cria o app"""
+    app = Flask(__name__)
+    app.register_blueprint(ANIMAL)
+    return app
