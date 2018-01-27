@@ -6,7 +6,7 @@ from flask import request, _request_ctx_stack
 
 
 import settings
-from api import AuthError
+from ..common.exceptions import AuthError
 
 
 def get_token_auth_header():
@@ -47,17 +47,14 @@ def requires_auth(f):
         token = get_token_auth_header()
         jsonurl = urlopen("https://" + settings.AUTH0_DOMAIN + "/.well-known/jwks.json")
         jwks = json.loads(jsonurl.read().decode("utf8"))
-        unverified_header = jwt.get_unverified_header(token)
-        rsa_key = {}
-        for key in jwks["keys"]:
-            if key["kid"] == unverified_header["kid"]:
-                rsa_key = {
-                    "kty": key["kty"],
-                    "kid": key["kid"],
-                    "use": key["use"],
-                    "n": key["n"],
-                    "e": key["e"]
-                }
+        keys = jwks["keys"][0]
+        rsa_key = {
+            "kty": keys["kty"],
+            "kid": keys["kid"],
+            "use": keys["use"],
+            "n": keys["n"],
+            "e": keys["e"]
+        }
         if rsa_key:
             try:
                 payload = jwt.decode(

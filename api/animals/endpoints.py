@@ -1,4 +1,8 @@
 from flask import Blueprint, request
+
+import settings
+import requests
+from api.authentication.auth_decorator import requires_auth, get_token_auth_header
 from ..common.utils import json_result
 from ..common.exceptions import InvalidInput
 from .model import Animal
@@ -8,7 +12,20 @@ from .schemas import AnimalSchema
 ANIMAL = Blueprint("animal", __name__, url_prefix="/animals")
 
 
+@ANIMAL.route("/getuser", methods=["GET"])
+@requires_auth
+@json_result
+def getuser_info():
+    token = get_token_auth_header()
+    url = 'https://' + settings.AUTH0_DOMAIN + '/userinfo'
+    headers = {'authorization': 'Bearer ' + token}
+    resp = requests.get(url, headers=headers)
+    userinfo = resp.json()
+    return userinfo
+
+
 @ANIMAL.route("/", methods=["GET"])
+@requires_auth
 @json_result
 def animals():
     return list(map(lambda x: {
