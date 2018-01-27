@@ -2,8 +2,7 @@ from flask import Flask, jsonify
 from mongoengine import connect
 import settings
 from api.animals.endpoints import ANIMAL
-from .common.exceptions import InvalidInput
-
+from .common.exceptions import InvalidInput, AuthError
 
 connect(host=settings.MONGODB_URI)
 
@@ -20,5 +19,10 @@ def handle_invalid_input(error):
 def create_app():
     app = Flask(__name__)
     app.register_blueprint(ANIMAL)
-    app.register_error_handler(InvalidInput, handle_invalid_input)
+
     return app
+
+
+def register_exceptions(app):
+    app.register_error_handler(InvalidInput, handle_invalid_input)
+    app.register_error_handler(AuthError, handle_invalid_input)

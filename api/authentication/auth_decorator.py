@@ -3,9 +3,10 @@ from functools import wraps
 from urllib.request import urlopen
 from jose import jwt
 from flask import request, _request_ctx_stack
-from api.authentication.auth_error import AuthError
+
 
 import settings
+from api import AuthError
 
 
 def get_token_auth_header():
