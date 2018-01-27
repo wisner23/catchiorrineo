@@ -1,17 +1,13 @@
-from flask import Flask, jsonify
-from api.animals.endpoints import animal
+"""
+Módulo inicializador da aplicação de API
+"""
+from flask import Flask
 from mongoengine import connect
+from api.animals.endpoints import ANIMAL
 import settings
 from api.authentication.auth_error import AuthError
 
 connect(host=settings.MONGODB_URI)
-app = Flask(__name__) 
+APP = Flask(__name__)
 
-app.register_blueprint(animal)
-
-
-@app.errorhandler(AuthError)
-def handle_auth_error(ex):
-    response = jsonify(ex.error)
-    response.status_code = ex.status_code
-    return response
+APP.register_blueprint(ANIMAL)
